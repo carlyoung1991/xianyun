@@ -11,12 +11,35 @@
              background-size:contain contain;
              `
           "
-          
         ></div>
       </el-carousel-item>
     </el-carousel>
     <!-- 搜索框 -->
-       
+    <div class="banner-content">
+      <div class="search-bar">
+        <!-- tab栏 -->
+        <el-row type="flex" class="search-tab">
+          <span
+            v-for="(item, index) in options"
+            :key="index"
+            :class="{ active: index === currentOption }"
+            @click="handleOption(index)"
+          >
+            <i>{{ item.name }}</i>
+          </span>
+        </el-row>
+
+        <!-- 输入框 -->
+        <el-row type="flex" align="middle" class="search-input">
+          <input
+            :placeholder="options[currentOption].placeholder"
+            v-model="searchValue"
+            @keyup.enter="handleSearch"
+          />
+          <i class="el-icon-search" @click="handleSearch"></i>
+        </el-row>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -25,7 +48,27 @@ export default {
   data() {
     return {
       // 轮播图数据
-      banners: []
+      banners: [],
+      options: [
+        // 搜索框tab选项
+        {
+          name: "攻略",
+          placeholder: "搜索城市",
+          pageUrl: "/post?city="
+        },
+        {
+          name: "酒店",
+          placeholder: "请输入城市搜索酒店",
+          pageUrl: "/hotel?city="
+        },
+        {
+          name: "机票",
+          placeholder: "请输入出发地",
+          pageUrl: "/air"
+        }
+      ],
+      searchValue:'',
+      currentOption:0
     };
   },
   mounted() {
@@ -36,6 +79,10 @@ export default {
       let { data } = res.data;
       this.banners = data;
     });
+  },
+  methods:{
+    handleOption(index){},
+        handleSearch(){}
   }
 };
 </script>
