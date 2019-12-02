@@ -81,8 +81,18 @@ export default {
     });
   },
   methods:{
-    handleOption(index){},
-        handleSearch(){}
+    handleOption(index){
+      this.currentOption=index
+      
+      let item =this.options[index]
+      if(item.name==='机票'){
+        return this.$router.push(item.pageUrl)
+      }
+    },
+        handleSearch(){
+          // 跳转的时候加上输入框的内容
+          this.$router.push(this.options[currentOption].pageUrl+this.searchValue)
+        }
   }
 };
 </script>
