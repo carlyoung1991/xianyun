@@ -11,10 +11,6 @@
              background-size:contain contain;
              `
           "
-<<<<<<< HEAD
-=======
-          阿斯蒂芬阿萨德
->>>>>>> 643caa92b40cc455337ba4204fb815cca1b6edf2
         ></div>
       </el-carousel-item>
     </el-carousel>
