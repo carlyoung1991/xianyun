@@ -151,14 +151,33 @@ export default {
           // console.log(this.ruleForm);
           const {checkPassword,...props}=this.ruleForm
           //因为验证密码不需要提交，所以要单独把他拿出来
-          this.$axios({
-            method:'POST',
-            url:`/accounts/register`,
-            data:props
-          })
+          // this.$axios({
+          //   method:'POST',
+          //   url:`/accounts/register`,
+          //   data:props
+          // })
+          // .then(res=>{
+          //   console.log(res);
+          //   if(res.data.token){
+          //     //清空输入内容
+          //     this.ruleForm=''
+          //     this.$emit('click')
+          //     this.$message({
+          //       message:'注册成功，现在去登录吧',
+          //       type:'success'
+          //     })
+          //    setTimeout(() => {
+          //       this.$router.push('/user/login')
+          //    }, 2000);
+          //   }
+          // })
+          this.$store.dispatch('user/register',props)
           .then(res=>{
             console.log(res);
-            if(res.data.token){
+             if(res){
+              //清空输入内容
+              this.ruleForm=''
+              this.$emit('click')
               this.$message({
                 message:'注册成功，现在去登录吧',
                 type:'success'

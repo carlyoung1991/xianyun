@@ -22,7 +22,8 @@
                 <!-- <LoginForm v-if="currentTab == 0"/> -->
                 <login v-if="currentTab===0"/>
                 <!-- 注册功能组件 -->
-                <register v-if="currentTab===1"/>
+                <register v-if="currentTab===1"
+                v-on:click='handlerclick'/>
                 <!-- <RegisterForm v-if="currentTab == 1"/> -->
             </div>
         </el-row>
@@ -41,6 +42,10 @@ export default {
   methods:{
     handleChangeTab(index){
       this.currentTab=index
+    },
+    //实现注册后跳转登录
+    handlerclick(){
+      this.currentTab=0
     }
   },
   components:{

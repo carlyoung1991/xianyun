@@ -4,12 +4,20 @@ export const state = () => ({
     userInfo: {
         token: '',
         user: {}
+    },
+    registerInfo:{
+        token: '',
+        user: {}
     }
 })
 export const mutations = {
     //保存信息到state
     setUserInfo(state, data) {
         state.userInfo = data
+    },
+    //保存注册信息
+    setRegisterInfo(state,data){
+        state.registerInfo=data
     },
     //清除用户登录信息
     cleanUserInfo(state, info) {
@@ -40,5 +48,18 @@ export const actions = {
                 commit('setUserInfo', data)
                 return data
             })
+    },
+    //封装注册功能
+    register({commit},data){
+       return this.$axios({
+           url:`/accounts/register`,
+           method:'POST',
+           data:data
+       })
+       .then(res=>{
+            console.log(res);
+            commit('setRegisterInfo',data)
+            return data
+       })
     }
 };
