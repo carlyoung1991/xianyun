@@ -7,7 +7,7 @@
     <!-- 单程或往返 -->
     <el-row type="flex" justify="space-between" class="singlegroup">
       <!-- 搜索菜单 -->
-      <div>搜索</div>
+      <searchForm></searchForm>
       <!-- bannee广告 -->
       <div class="banner">
         <img src="http://157.122.54.189:9093/images/pic_sale.jpeg" alt="" />
@@ -44,7 +44,15 @@
 </template>
 
 <script>
-export default {};
+import searchForm from "@/components/air/searchForm";
+export default {
+  data() {
+    return {};
+  },
+  components: {
+    searchForm
+  }
+};
 </script>
 
 <style lang="less">
@@ -67,17 +75,28 @@ export default {};
     height: 50px;
     vertical-align: middle;
     font-size: 15px;
-    div::after {
-      display: block;
-      height: 40px;
-      border-right: 1px solid #999;
-      span {
-        font-size: 25px;
-        vertical-align: middle;
+    div {
+      width: 33%;
+      text-align: center;
+      &:after {
+        content: "";
+        height: 20px;
+        border-right: 1px solid #999;
+        float: right;
+
+        span {
+          font-size: 30px;
+          vertical-align: middle;
+        }
+      }
+      &:nth-child(3) {
+        &:after {
+          border: none;
+        }
       }
     }
   }
-  .specialprice{
+  .specialprice {
     border: 1px solid #999;
   }
 }
