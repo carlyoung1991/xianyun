@@ -5,7 +5,7 @@
       <span
         v-for="(item, index) in tabs"
         :key="index"
-        @click="handleSearchTab(item, index)"
+        @click="handleSearchTab(index)"
         :class="{ active: index === currentTab }"
       >
         <i :class="item.icon"></i>{{ item.name }}
@@ -20,8 +20,10 @@
           :fetch-suggestions="queryDepartSearch"
           placeholder="请搜索出发城市"
           v-model="form.departCity"
-          @select="handleDepartSelect"
+          @select="selectDepartSelect"
           class="el-autocomplete"
+          :trigger-on-focus="false"
+          :highlight-first-item="true"
         ></el-autocomplete>
       </el-form-item>
       <el-form-item label="到达城市">
@@ -29,7 +31,8 @@
           :fetch-suggestions="queryDestSearch"
           placeholder="请搜索到达城市"
           v-model="form.destCity"
-          @select="handleDestSelect"
+          @select="selectDestSelect"
+          :trigger-on-focus="false"
           class="el-autocomplete"
         ></el-autocomplete>
       </el-form-item>
@@ -54,6 +57,9 @@
           搜索
         </el-button>
       </el-form-item>
+      <div class="reverse">
+        <span @click="reverseCity">换</span>
+      </div>
     </el-form>
   </div>
 </template>
@@ -77,70 +83,106 @@ export default {
       currentTab: 0
     };
   },
-  components:{moment},
+  components: { moment },
   methods: {
-    handleSearchTab(item, index) {},
+    handleSearchTab(index) {
+      if (index == 1) {
+        this.$confirm("目前暂不支持往返，请使用单程搜索！", "提示", {
+          confirmButtonText: "哦",
+          showCancelButton: false,
+          type: "warning"
+        });
+      }
+    },
     //value是选中的值
     async queryDepartSearch(value, cb) {
-      // cb是回调函数，接受要展示的列表
-      const arr = await this.querySearchAsync(value);
-      if (arr.length > 0) {
-        this.form.departCity = arr[0].value;
-        this.form.departCode = arr[0].sort;
-      }
+      const arr = await this.searchCity(value);
+      this.form.departCode = arr[0].sort;
       cb(arr);
     },
     async queryDestSearch(value, cb) {
       // cb是回调函数，接受要展示的列表
-      const arr = await this.querySearchAsync(value);
-      if (arr.length > 0) {
-        this.form.destCity = arr[0].value;
-        this.form.destCode = arr[0].sort;
-      }
-      cb
+      const arr = await this.searchCity(value);
+      this.form.destCode = arr[0].sort;
+      cb(arr);
     },
-    //封装查询关键字方法
-    querySearchAsync(queryString) {
-      return new Promise((resolve, reject) => {
-        if (!queryString) {
-          return resolve([]);
+    //封装发送请求
+    searchCity(value) {
+      return this.$axios({
+        url: "/airs/city",
+        params: {
+          name: value
         }
-        this.$axios({
-          url: `/airs/city`,
-          params: {
-            name: queryString
-          }
-        }).then(res => {
-          console.log(res);
-          const { data } = res.data;
-          // 下拉提示列表必须要有value字段
-          const arr = data.map(v => {
-            return {
-              ...v,
-              value: v.name.replace("市", "")
-            };
-          });
-          resolve(arr);
+      }).then(res => {
+        console.log(res);
+        const { data } = res.data;
+        const arr = data.map(element => {
+          return {
+            ...element,
+            value: element.name.replace("市", "")
+          };
         });
+        // const cityList =arr.filter(element=>{
+        //   // 过滤器里面，所有合法数据应该return true
+        //   if(element.sort){
+        //     return true
+        //   }
+        //   return element .sort
+        // })
+        // 用过滤器将所有不带sort的数据去掉
+        const cityList = arr.filter(element => element.sort);
+        return cityList;
       });
     },
     //出发城市下拉选择时触发
-    handleDepartSelect(item) {
-      this.form.departCity = item.value;
+    selectDepartSelect(item) {
+      // 我们的搜索建议列表其实是使用数组进行渲染的,
+      // 每一个元素都是一个对象
+      // 当我们点击列表里面的其中一个选项时,
+      // 这个选项对应的 对象就会被自动传到 这个 select 时间当中
+      // 当我们点击了一个选项, 触发 select 事件以后
+      // 会有一个 被点击选项的对象传到这个函数里面
+      // 将 item.sort 放到 form.departCode
+      // 这个 item 就是一个城市
       this.form.departCode = item.sort;
     },
     // 目标城市下拉选择时触发
-    handleDestSelect(item) {
-      this.form.destCity = item.value;
+    selectDestSelect(item) {
       this.form.destCode = item.sort;
     },
     // 确认选择日期时触发
     handleDate(value) {
-      this.form.departDate=moment(value).format('YYYY-MM-DD')
+      this.form.departDate = moment(value).format("YYYY-MM-DD");
     },
     // 提交表单是触发
     handleSubmit() {
       console.log(this.form);
+       // query 的参数都会作为 url location.search 参数待在最后以问号开头,& 分隔
+      // params
+      // 1. 如果我们的路由配置, path 里面有动态路由参数, 而且你传的 params 也是相同名称的属性,那么这个参数就会显示在url上
+      // 2. 如果没有配置动态路由,参数一样可以传递,跳转之后的页面 可以通过 this.$route.params 接受,但是不会显示在 url,一旦刷新,这个传值就会丢失.
+      for(var i in this.form){
+        if(!this.form[i]){
+          this.$message('不能为空')
+          return false
+        }else{
+          this.$router.push({
+            path: '/air/flights',
+            query: this.form
+          })
+        }
+      }
+    },
+    reverseCity(){
+      // 这里面需要做的事情是将出发地和到达地互换
+      // this.form.departCity = this.form.destCity;
+      // 如果这样子的话 那么数据就会丢失
+      // 应该先创建临时变量储存
+      const {destCity,destCode,departCity,departCode} =this.form
+      this.form.departCity=destCity
+      this.form.departCode=destCode
+      this.form.destCity=departCity
+      this.form.destCode=departCode
     }
   }
 };
