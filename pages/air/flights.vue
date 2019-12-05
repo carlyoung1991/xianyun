@@ -3,54 +3,94 @@
     <el-row type="flex" justify="space-between">
       <!-- 顶部过滤列表 -->
       <div class="flights-content">
-        <!-- 过滤条件 -->
-        <div></div>
+        <!-- 其他代码 -->
 
         <!-- 航班头部布局 -->
-        <el-row class="flight-title">
-          <el-col :span="5">
-            航空信息
-          </el-col>
-          <el-col :span="14">
-            <el-row type="flex" justify="space-between">
-              <el-col :span="12">
-                起飞时间
-              </el-col>
-              <el-col :span="12">
-                到达时间
-              </el-col>
-            </el-row>
-          </el-col>
-          <el-col :span="5">
-            价格
-          </el-col>
-        </el-row>
-        <flightListHead/>
+        <FlightsListHead />
         <!-- 航班信息 -->
-        <div></div>
+        <!-- 航班列表 -->
+        <FlightsItem
+          v-for="(item, index) in flightList"
+          :key="index"
+          :data="item"
+        />
+        <el-row type="flex" justify="center" style="margin-top:10px;">
+          <!-- size-change是切换条数是触发 -->
+          <!-- current-change切换页数时触发 -->
+          <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="pageIndex"
+            :page-sizes="[10, 15, 20, 25]"
+            :page-size="pageSize"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="flightdata.total"
+          >
+          </el-pagination>
+        </el-row>
       </div>
 
-      <!-- 侧边栏 -->
-      <div class="aside">
-        <!-- 侧边栏组件 -->
-      </div>
+      <!-- 其他代码... -->
     </el-row>
   </section>
 </template>
 
 <script>
-import flightListHead from '@/components/air/FlightsListHead'
+import FlightsListHead from "@/components/air/flightsListHead.vue";
+import FlightsItem from "@/components/air/flightsItem.vue";
+
 export default {
-    data(){
-        return{}
+  data() {
+    return {
+      flightdata: {},
+      flightList: [],
+      pageIndex: 1,
+      pageSize: 15,
+      total:''
+    };
+  },
+
+  components: {
+    FlightsListHead,
+    FlightsItem
+  },
+  // 获取航班列表信息
+  mounted() {
+    this.getData();
+  },
+  methods: {
+    getData() {
+      this.$axios({
+        url: `airs`,
+        params: this.$route.query
+      }).then(res => {
+        console.log(res);
+        this.flightdata = res.data;
+        this.setDataList()
+      });
     },
-    components:{
-        flightListHead
+    // 分页功能
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+        this.pageSize=val
+        // this.pageIndex=1
+        this.setDataList()
+    },
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`);
+      this.pageIndex=val
+     this.setDataList()
+    },
+    setDataList(){
+         const start = (this.pageIndex-1)*this.pageSize
+      const end =start +this.pageSize
+      this.flightList=this.flightdata.flights.slice(start,end)
     }
+  }
 };
 </script>
 
-<style lang="less">
+<style scoped lang="less">
 .contianer {
   width: 1000px;
   margin: 20px auto;
@@ -63,19 +103,5 @@ export default {
 
 .aside {
   width: 240px;
-}
-.flight-title {
-  padding: 0 15px;
-  border: 1px #ddd solid;
-  background: #f6f6f6;
-  height: 38px;
-  line-height: 38px;
-  color: #666;
-  font-size: 12px;
-  margin-bottom: 10px;
-
-  > div {
-    text-align: center;
-  }
 }
 </style>

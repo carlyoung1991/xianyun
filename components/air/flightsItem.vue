@@ -90,7 +90,6 @@ export default {
       const dep = this.data.dep_time.split(":");
       const arr = this.data.arr_time.split(":");
       const depVal = dep[0] * 60 + +dep[1];
-      console.log(depVal);
       const arrVal = arr[0] * 60 + +arr[1];
 
       //计算时间相减得到分钟
