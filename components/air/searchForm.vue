@@ -95,7 +95,8 @@ export default {
         });
       }
     },
-    //value是选中的值
+    // 出发城市输入框获得焦点时触发
+    //value是选中的值，cb是回调函数，接受要展示的列表
     async queryDepartSearch(value, cb) {
       const arr = await this.searchCity(value);
       this.form.departCode = arr[0].sort;
@@ -121,6 +122,8 @@ export default {
           return {
             ...element,
             value: element.name.replace("市", "")
+            //使用正则表达匹配城市名
+            // value:element.name.replace(/市$/,'')
           };
         });
         // const cityList =arr.filter(element=>{
