@@ -160,7 +160,6 @@ export default {
     },
     // 提交表单是触发
     handleSubmit() {
-      console.log(this.form);
        // query 的参数都会作为 url location.search 参数待在最后以问号开头,& 分隔
       // params
       // 1. 如果我们的路由配置, path 里面有动态路由参数, 而且你传的 params 也是相同名称的属性,那么这个参数就会显示在url上
@@ -176,7 +175,14 @@ export default {
           })
         }
       }
+      // 添加的操作需要回到机票首页的搜索表单中，搜索跳转时把搜索的记录添加到本地。
+      // 将当前搜索的数据放入vuex
+      // 作为历史记录保持
+      // 不能直接赋值vuex,要使用muations
+      this.$store.commit('history/addHistoryItem',this.form)
+      console.log(this.form);
     },
+
     reverseCity(){
       // 这里面需要做的事情是将出发地和到达地互换
       // this.form.departCity = this.form.destCity;

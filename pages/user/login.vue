@@ -54,7 +54,7 @@ export default {
 }
 </script>
 
-<style lang='less'>
+<style lang='less' scoped>
   .container{
     background:url(http://157.122.54.189:9095/assets/images/th03.jfif) center 0;
     height: 700px;

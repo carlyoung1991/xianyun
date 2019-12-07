@@ -82,6 +82,10 @@ export default {
      return this.flightdata.flights.slice(start, end);
     }
   },
+  watch:{
+    $route(){
+    }
+  },
   // 获取航班列表信息
   mounted() {
     // this.getData();
