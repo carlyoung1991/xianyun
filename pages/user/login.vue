@@ -17,14 +17,16 @@
                         {{item}}
                     </span>
                 </el-row>
-
-                <!-- 登录功能组件 -->
+                <transition enter-active-class="animated zoomOutRight">
+                  <!-- 登录功能组件 -->
                 <!-- <LoginForm v-if="currentTab == 0"/> -->
                 <login v-if="currentTab===0"/>
                 <!-- 注册功能组件 -->
                 <register v-if="currentTab===1"
                 v-on:click='handlerclick'/>
                 <!-- <RegisterForm v-if="currentTab == 1"/> -->
+                </transition>
+                
             </div>
         </el-row>
     </div>
@@ -34,6 +36,13 @@
 import login from '@/components/user/login'
 import register from '@/components/user/register'
 export default {
+  transition:{
+     enterActiveClass: "animated fadeInLeftBig",
+     enterActiveClass: "animated flipInY",
+     enterActiveClass: "animated zoomOutRight",
+     
+
+  },
   data(){
     return{
       currentTab:0

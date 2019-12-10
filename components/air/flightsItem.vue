@@ -52,6 +52,7 @@
                   class="flight-sell"
                   v-for="(item, index) in data.seat_infos"
                   :key="index"
+                  
                 >
                   <el-col :span="16" class="flight-sell-left">
                     <span>{{ item.name }}</span> | {{ item.supplierName }}
@@ -60,7 +61,7 @@
                     ￥{{ item.org_settle_price }}
                   </el-col>
                   <el-col :span="3" class="choose-button">
-                    <el-button type="warning" size="mini">
+                    <el-button type="warning" size="mini" @click="goToOrder(item.seat_xid)">
                       选定
                     </el-button>
                     <p>剩余：{{ item.discount }}</p>
@@ -91,6 +92,16 @@ export default {
       setTimeout(() => {
         this.isShowRecommend = !this.isShowRecommend;
       }, );
+    },
+    //跳转订单页面
+    goToOrder(seatId){
+      this.$router.push({
+        path:'/air/order',
+        query:{
+          id:this.data.id,
+          seat_xid:seatId
+        }
+      })
     }
   },
   props: ["data"],

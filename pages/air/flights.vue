@@ -103,7 +103,7 @@ export default {
   methods: {
     //接收子串父的数据
     setDataListabc(newFlightsList) {
-      console.log(newFlightsList);
+      // console.log(newFlightsList);
       this.flightdata.flights = newFlightsList;
     },
     // getData() {
